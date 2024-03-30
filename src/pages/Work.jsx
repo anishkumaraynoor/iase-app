@@ -5,6 +5,7 @@ import PizZip from 'pizzip';
 import PizZipUtils from 'pizzip/utils/index.js';
 import { saveAs } from 'file-saver';
 import expressionParser from 'docxtemplater/expressions';
+import { getStudentAPI } from '../services/allAPI';
 
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -15,14 +16,31 @@ function Work() {
   const [tcData, setTcData] = useState({
     tcno:"",tcdate:"",name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"",due:"",scholarship:"",examination:"",leftdate:"",applidate:"",issuedate:""
   })
-  
 
-  const formatData = (e)=>{
-    let {value, name} = e.target
+  const formatDate = (value)=>{
     var dataArray = value.split('-')
     var dataFormat = dataArray[2]+'-'+dataArray[1]+'-'+dataArray[0]
-    setTcData({...tcData, [name]:dataFormat})
+    return dataFormat
   }
+
+  
+  const getStudent = async () => {
+    try {
+        const reqHeader = {
+          "Content-Type": "application/json",
+        }
+        const result = await getStudentAPI(tcData.admno,reqHeader)
+        if (result.status === 200) {
+          let baseData = result.data
+          
+          setTcData({...tcData,name:baseData.name,sem:baseData.class, admdate:baseData.admyear})
+        }
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
 
   const generateDocument = () => {
     
@@ -38,7 +56,10 @@ function Work() {
           linebreaks: true,
           parser: expressionParser,
         });
-        doc.render(tcData);
+        // let adate = formatDate(tcData.admdate)
+        
+        
+        doc.render({...tcData, admdate:formatDate(tcData.admdate)});
         const out = doc.getZip().generate({
           type: 'blob',
           mimeType:
@@ -55,13 +76,21 @@ function Work() {
         <Row>
           <Col lg={6}>
             <Row className='container'>
+            <Col className='mt-1' lg={6}>
+                <label htmlFor="">Admission No.</label><br />
+                <input onChange={e=>setTcData({...tcData, admno:e.target.value})} value={tcData.admno} className='' type="text" name="" id="" />
+              </Col>
+              <Col lg={6} >
+            <button onClick={getStudent} className='btn btn-success mt-3'>Get Student</button>
+          </Col>
+
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">TC No.</label><br />
                 <input onChange={e=>setTcData({...tcData, tcno:e.target.value})} value={tcData.tcno} className='' type="text" name="" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Date</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="tcdate" id="" />
+                <input onChange={e=>setTcData({...tcData, tcdate:e.target.value})} value={tcData.tcdate} className='' type="date" name="tcdate" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">Name</label><br />
@@ -69,16 +98,13 @@ function Work() {
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Date of Birth</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="dob" id="" />
+                <input onChange={e=>setTcData({...tcData, dob:e.target.value})} value={tcData.dob} className='' type="date" name="dob" id="" />
               </Col>
 
-              <Col className='mt-1' lg={12}>
-                <label htmlFor="">Admission No.</label><br />
-                <input onChange={e=>setTcData({...tcData, admno:e.target.value})} value={tcData.admno} className='' type="text" name="" id="" />
-              </Col>
+              
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Admitted On</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="admdate" id="" />
+                <input onChange={e=>setTcData({...tcData, admdate:e.target.value})} value={tcData.admdate} className='' type="date" name="admdate" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">into class</label><br />
@@ -86,7 +112,7 @@ function Work() {
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Left On</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="dateleft" id="" />
+                <input onChange={e=>setTcData({...tcData, dateleft:e.target.value})} value={tcData.dateleft} className='' type="date" name="dateleft" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">from class</label><br />
@@ -125,15 +151,15 @@ function Work() {
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Date on which actually left</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="leftdate" id="" />
+                <input onChange={e=>setTcData({...tcData, leftdate:e.target.value})} value={tcData.leftdate} className='' type="date" name="leftdate" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">Date of application for TC</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="applidate" id="" />
+                <input onChange={e=>setTcData({...tcData, applidate:e.target.value})} value={tcData.applidate} className='' type="date" name="applidate" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Date of issue of TC</label><br />
-                <input onChange={e=>formatData(e)} className='' type="date" name="issuedate" id="" />
+                <input onChange={e=>setTcData({...tcData, issuedate:e.target.value})} value={tcData.issuedate} className='' type="date" name="issuedate" id="" />
               </Col>
             </Row>
           </Col>
