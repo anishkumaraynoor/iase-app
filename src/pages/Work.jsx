@@ -14,7 +14,7 @@ function loadFile(url, callback) {
 
 function Work() {
   const [tcData, setTcData] = useState({
-    tcno:"",tcdate:"",name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"",due:"",scholarship:"",examination:"",leftdate:"",applidate:"",issuedate:""
+    tcno:"",tcdate:`${new Date()}`,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:"",issuedate:""
   })
 
   const formatDate = (value)=>{
@@ -33,7 +33,7 @@ function Work() {
         if (result.status === 200) {
           let baseData = result.data
           
-          setTcData({...tcData,name:baseData.name,sem:baseData.class, admdate:baseData.admyear})
+          setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,dob:baseData.dob,subject:baseData.subject})
         }
       
     } catch (error) {
@@ -59,7 +59,7 @@ function Work() {
         // let adate = formatDate(tcData.admdate)
         
         
-        doc.render({...tcData, admdate:formatDate(tcData.admdate)});
+        doc.render({...tcData, admdate:formatDate(tcData.admdate),dob:formatDate(tcData.dob)});
         const out = doc.getZip().generate({
           type: 'blob',
           mimeType:

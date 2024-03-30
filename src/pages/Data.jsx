@@ -27,7 +27,7 @@ function Data() {
     return (
         <div className='container mt-5'>
             <input onChange={e=>setDataFile(e.target.files[0])} className='text-center' type="file" name="" id="" />      
-            <button onClick={exportCSV} >Add CSV File</button>
+            <button className='btn btn-success' onClick={exportCSV} >Add CSV File</button>
         </div>
     )
 }
