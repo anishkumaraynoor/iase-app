@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
 import { addCsvAPI } from '../services/allAPI'
+import { Link } from 'react-router-dom'
+
+
+
+
 
 function Data() {
     const [dataFile, setDataFile] = useState("")
@@ -26,8 +31,13 @@ function Data() {
     }
     return (
         <div className='container mt-5'>
-            <input onChange={e=>setDataFile(e.target.files[0])} className='text-center' type="file" name="" id="" />      
-            <button className='btn btn-success' onClick={exportCSV} >Add CSV File</button>
+            
+                <input onChange={e=>setDataFile(e.target.files[0])} className='text-center' type="file" name="" id="" />      
+                <button className='btn btn-success' onClick={exportCSV} >Add CSV File</button>
+            
+            <br />
+            <Link to={'/update'}><button className='btn btn-success mt-5' >Update Data</button></Link>
+            
         </div>
     )
 }

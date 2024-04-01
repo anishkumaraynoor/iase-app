@@ -13,8 +13,9 @@ function loadFile(url, callback) {
 
 
 function Work() {
+  let today = new Date().toISOString().split('T')[0]
   const [tcData, setTcData] = useState({
-    tcno:"",tcdate:`${new Date()}`,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:"",issuedate:""
+    tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:"",issuedate:today
   })
 
   const formatDate = (value)=>{
@@ -59,7 +60,11 @@ function Work() {
         // let adate = formatDate(tcData.admdate)
         
         
-        doc.render({...tcData, admdate:formatDate(tcData.admdate),dob:formatDate(tcData.dob)});
+        doc.render({...tcData, admdate:formatDate(tcData.admdate),
+          dob:formatDate(tcData.dob), tcdate:formatDate(tcData.tcdate),
+          dateleft:formatDate(tcData.dateleft),
+          leftdate:formatDate(tcData.leftdate), applidate:formatDate(tcData.applidate),
+          issuedate:formatDate(tcData.issuedate)});
         const out = doc.getZip().generate({
           type: 'blob',
           mimeType:
@@ -108,15 +113,31 @@ function Work() {
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">into class</label><br />
-                <input onChange={e=>setTcData({...tcData, sem:e.target.value})} value={tcData.sem} className='' type="text" name="" id="" />
+                <select onChange={e=>setTcData({...tcData, sem:e.target.value})} value={tcData.sem} name="" id="">
+                <option value="">--select--</option>
+                <option value="I BEd" >I BEd</option>
+                <option value="II BEd" >II BEd</option>
+                <option value="I MEd" >I MEd</option>
+                <option value="II MEd" >II MEd</option>
+                <option value="I PhD" >I PhD</option>
+                <option value="II PhD" >II PhD</option>
+              </select>
               </Col>
               <Col className='mt-1' lg={6}>
               <label htmlFor="">Left On</label><br />
-                <input onChange={e=>setTcData({...tcData, dateleft:e.target.value})} value={tcData.dateleft} className='' type="date" name="dateleft" id="" />
+                <input onChange={e=>setTcData({...tcData, dateleft:e.target.value, leftdate:e.target.value})} value={tcData.dateleft} className='' type="date" name="dateleft" id="" />
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">from class</label><br />
-                <input onChange={e=>setTcData({...tcData, sem1:e.target.value})} value={tcData.sem1} className='' type="text" name="" id="" />
+                <select onChange={e=>setTcData({...tcData, sem1:e.target.value})} name="" id="">
+                <option value="">--select--</option>
+                <option value="I BEd">I BEd</option>
+                <option value="II BEd">II BEd</option>
+                <option value="I MEd">I MEd</option>
+                <option value="II MEd">II MEd</option>
+                <option value="I PhD">I PhD</option>
+                <option value="II PhD">II PhD</option>
+              </select>
               </Col>
 
               <Col className='mt-1' lg={6}>
