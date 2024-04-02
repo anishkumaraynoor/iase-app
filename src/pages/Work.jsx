@@ -5,7 +5,7 @@ import PizZip from 'pizzip';
 import PizZipUtils from 'pizzip/utils/index.js';
 import { saveAs } from 'file-saver';
 import expressionParser from 'docxtemplater/expressions';
-import { getStudentAPI } from '../services/allAPI';
+import { getStudentAPI, updateStudentAPI } from '../services/allAPI';
 
 function loadFile(url, callback) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -17,6 +17,7 @@ function Work() {
   const [tcData, setTcData] = useState({
     tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:"",issuedate:today
   })
+  const [duplicate, setDuplicate] = useState("")
 
   const formatDate = (value)=>{
     var dataArray = value.split('-')
@@ -34,17 +35,63 @@ function Work() {
         if (result.status === 200) {
           let baseData = result.data
           
-          setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,dob:baseData.dob,subject:baseData.subject})
+          if(baseData.tcno!=''){
+            if(confirm("TC Already Issued to This Student... Do you want DUPLICATE TC?")==true){
+              setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,
+                dob:baseData.dob,subject:baseData.subject,tcno:baseData.tcno})
+                setDuplicate("//   DUPLICATE   //")
+            }else{
+              setTcData({tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",
+              sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",
+              examination:"",leftdate:"",applidate:"",issuedate:today})
+            }
+          }else{
+            setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,
+            dob:baseData.dob,subject:baseData.subject,tcno:baseData.nextTcNo})
+            setDuplicate("")
+          }
         }
       
     } catch (error) {
       console.log(error);
     }
   }
+
+
+
+  const handleUpdateStudent = async()=>{
+    const {tcno,tcdate} = tcData
+    
+
+
+      const reqBody = new FormData()
+      reqBody.append('tcno',tcno)
+      reqBody.append('tcdate',tcdate)
+
+      
+        const reqHeader = {
+          "Content-Type":"application/json",
+        }
+        console.log("proceed to api call");
+        try {
+          const result = await updateStudentAPI(admno,reqBody,reqHeader)
+          if(result.status===200){
+            alert("updated successfully")
+          }else{
+            console.log(result);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      
+    
+  }
   
 
   const generateDocument = () => {
-    
+
+    handleUpdateStudent()
+
     loadFile(
       '/src/pages/tcinput.docx',
       function (error, content) {
@@ -57,14 +104,13 @@ function Work() {
           linebreaks: true,
           parser: expressionParser,
         });
-        // let adate = formatDate(tcData.admdate)
         
         
         doc.render({...tcData, admdate:formatDate(tcData.admdate),
           dob:formatDate(tcData.dob), tcdate:formatDate(tcData.tcdate),
           dateleft:formatDate(tcData.dateleft),
           leftdate:formatDate(tcData.leftdate), applidate:formatDate(tcData.applidate),
-          issuedate:formatDate(tcData.issuedate)});
+          issuedate:formatDate(tcData.issuedate),duplicate : duplicate});
         const out = doc.getZip().generate({
           type: 'blob',
           mimeType:
