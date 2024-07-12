@@ -15,8 +15,11 @@ function loadFile(url, callback) {
 function Work() {
   let today = new Date().toISOString().split('T')[0]
   const [tcData, setTcData] = useState({
-    tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:"",issuedate:today
+    tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",sem1:"",subject:"",
+    course:"Course Completed",due:"Yes",scholarship:"EGrants",examination:"",leftdate:"",applidate:today,
+    issuedate:today, id:""
   })
+  const [mob, setMob] = useState("")
   const [duplicate, setDuplicate] = useState("")
 
   const formatDate = (value)=>{
@@ -26,30 +29,32 @@ function Work() {
   }
 
   
-  const getStudent = async () => {
+  const getStudent = async (s) => {
     try {
         const reqHeader = {
           "Content-Type": "application/json",
         }
-        const result = await getStudentAPI(tcData.admno,reqHeader)
+        const result = await getStudentAPI(s,reqHeader)
         if (result.status === 200) {
           let baseData = result.data
           
           if(baseData.tcno!=''){
             if(confirm("TC Already Issued to This Student... Do you want DUPLICATE TC?")==true){
-              setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,
-                dob:baseData.dob,subject:baseData.subject,tcno:baseData.tcno})
+              setTcData({...tcData,name:baseData.name,sem:baseData.class,sem1:"I"+baseData.class,admdate:baseData.admdate,
+                leftdate:baseData.leftdate,dateleft:baseData.leftdate,dob:baseData.dob,subject:baseData.subject,tcno:baseData.tcno, admno:baseData.admno, id:baseData._id})
                 setDuplicate("//   DUPLICATE   //")
             }else{
               setTcData({tcno:"",tcdate:today,name:"",dob:"",admno:"",admdate:"",sem:"",dateleft:"",
               sem1:"",subject:"",course:"Course Completed",due:"Yes",scholarship:"EGrants",
-              examination:"",leftdate:"",applidate:"",issuedate:today})
+              examination:"",leftdate:"",applidate:today,issuedate:today, id:""})
             }
           }else{
-            setTcData({...tcData,name:baseData.name,sem:baseData.class,admdate:baseData.admdate,
-            dob:baseData.dob,subject:baseData.subject,tcno:baseData.nextTcNo})
+            setTcData({...tcData,name:baseData.name,sem:baseData.class,sem1:"I"+baseData.class,admdate:baseData.admdate,
+            leftdate:baseData.leftdate,dateleft:baseData.leftdate,dob:baseData.dob,subject:baseData.subject,tcno:baseData.nextTcNo, admno:baseData.admno, id:baseData._id})
             setDuplicate("")
           }
+        }else{
+          console.log(result);
         }
       
     } catch (error) {
@@ -60,7 +65,7 @@ function Work() {
 
 
   const handleUpdateStudent = async()=>{
-    const {tcno,tcdate} = tcData
+    const {id,tcno,tcdate} = tcData
     
 
 
@@ -74,7 +79,7 @@ function Work() {
         }
         console.log("proceed to api call");
         try {
-          const result = await updateStudentAPI(admno,reqBody,reqHeader)
+          const result = await updateStudentAPI(id,reqBody,reqHeader)
           if(result.status===200){
             alert("updated successfully")
           }else{
@@ -93,7 +98,7 @@ function Work() {
     handleUpdateStudent()
 
     loadFile(
-      '/src/pages/tcinput.docx',
+      '/tcinput.docx',
       function (error, content) {
         if (error) {
           throw error;
@@ -132,7 +137,7 @@ function Work() {
                 <input onChange={e=>setTcData({...tcData, admno:e.target.value})} value={tcData.admno} className='' type="text" name="" id="" />
               </Col>
               <Col lg={6} >
-            <button onClick={getStudent} className='btn btn-success mt-3'>Get Student</button>
+            <button onClick={e=>getStudent(tcData.admno)} className='btn btn-success mt-3'>Get Student</button>
           </Col>
 
               <Col className='mt-1' lg={6}>
@@ -161,12 +166,12 @@ function Work() {
                 <label htmlFor="">into class</label><br />
                 <select onChange={e=>setTcData({...tcData, sem:e.target.value})} value={tcData.sem} name="" id="">
                 <option value="">--select--</option>
-                <option value="I BEd" >I BEd</option>
-                <option value="II BEd" >II BEd</option>
-                <option value="I MEd" >I MEd</option>
-                <option value="II MEd" >II MEd</option>
-                <option value="I PhD" >I PhD</option>
-                <option value="II PhD" >II PhD</option>
+                <option value="I B.Ed." >I B.Ed.</option>
+                <option value="II B.Ed." >II B.Ed.</option>
+                <option value="I M.Ed." >I M.Ed.</option>
+                <option value="II M.Ed." >II M.Ed.</option>
+                <option value="I Ph.D." >I Ph.D.</option>
+                <option value="II Ph.D." >II Ph.D.</option>
               </select>
               </Col>
               <Col className='mt-1' lg={6}>
@@ -175,14 +180,14 @@ function Work() {
               </Col>
               <Col className='mt-1' lg={6}>
                 <label htmlFor="">from class</label><br />
-                <select onChange={e=>setTcData({...tcData, sem1:e.target.value})} name="" id="">
+                <select onChange={e=>setTcData({...tcData, sem1:e.target.value})} value={tcData.sem1} name="" id="">
                 <option value="">--select--</option>
-                <option value="I BEd">I BEd</option>
-                <option value="II BEd">II BEd</option>
-                <option value="I MEd">I MEd</option>
-                <option value="II MEd">II MEd</option>
-                <option value="I PhD">I PhD</option>
-                <option value="II PhD">II PhD</option>
+                <option value="I B.Ed.">I B.Ed.</option>
+                <option value="II B.Ed.">II B.Ed.</option>
+                <option value="I M.Ed.">I M.Ed.</option>
+                <option value="II M.Ed.">II M.Ed.</option>
+                <option value="I Ph.D.">I Ph.D.</option>
+                <option value="II Ph.D.">II Ph.D.</option>
               </select>
               </Col>
 
@@ -231,7 +236,14 @@ function Work() {
             </Row>
           </Col>
           <Col lg={6} >
-            <button onClick={generateDocument} className='btn btn-success'>Print</button>
+            <Row>
+            <Col className='mt-1' lg={6}>
+              <label htmlFor="">Mobile No.</label><br />
+                <input onChange={e=>setMob(e.target.value)} value={mob} className='' type="text" id="" />
+              </Col>
+            </Row>
+            <button onClick={e=>getStudent(mob)} className='btn btn-success mt-3'>Get Student by Phone Number</button><br />
+            <button onClick={generateDocument} className='btn btn-primary mt-3'>Print</button>
           </Col>
         </Row>
       </div>

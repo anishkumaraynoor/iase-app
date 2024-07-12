@@ -14,6 +14,7 @@ function Header() {
           <Nav className="me-auto">
             <Nav.Link><Link style={{textDecoration:'none', color:'white'}} to={'/data'}>Data</Link></Nav.Link>
             <Nav.Link><Link style={{textDecoration:'none', color:'white'}} to={'/tc'}>TC</Link></Nav.Link>
+            <Nav.Link><Link style={{textDecoration:'none', color:'white'}} to={'/display'}>Display</Link></Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
