@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table';
 import { getAllStudentsAPI } from '../services/allAPI';
+import Spinner from 'react-bootstrap/Spinner';
 
 function Display() {
     const [studentData, setStudentData] = useState([])
@@ -72,7 +73,7 @@ function Display() {
         <td>{student.tcno}</td>
         <td>{student.tcdate.split("-")[2]+"-"+student.tcdate.split("-")[1]+"-"+student.tcdate.split("-")[0]}</td>
       </tr>
-      )): <h1>Nothing to display</h1>
+      )): <h1>Loading...<Spinner animation="border" /></h1>
         
       }
       
