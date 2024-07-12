@@ -5,5 +5,5 @@
 
 
 
-const SERVER_URL = 'http://localhost:3001'
+const SERVER_URL = 'https://iasethrissur.onrender.com'
 export default SERVER_URL
