@@ -121,7 +121,7 @@ function Work() {
           mimeType:
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         }); //Output the document using Data-URI
-        saveAs(out, 'tcoutput.docx');
+        saveAs(out, `${tcData.name}.doc`);
       }
     );
   };
