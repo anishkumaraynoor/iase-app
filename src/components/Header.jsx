@@ -7,9 +7,10 @@ import { Link } from 'react-router-dom';
 function Header() {
   return (
     <>
-         <Navbar expand="lg" className="bg-primary">
+         <Navbar expand="sm" className="bg-primary">
       <Container>
         <Navbar.Brand ><Link style={{textDecoration:'none', color:'white'}} to={'/'}><img src='/iase.jpeg' width={35} height={35}></img>IASE, Thrissur</Link></Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />        
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link><Link style={{textDecoration:'none', color:'white'}} to={'/data'}>Data</Link></Nav.Link>
