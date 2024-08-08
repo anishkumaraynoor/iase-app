@@ -98,7 +98,7 @@ function Work() {
     handleUpdateStudent()
 
     loadFile(
-      '/tcinput.docx',
+      '/tc.docx',
       function (error, content) {
         if (error) {
           throw error;
@@ -122,6 +122,35 @@ function Work() {
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         }); //Output the document using Data-URI
         saveAs(out, `${tcData.name}.doc`);
+      }
+    );
+  };
+
+  const generateCC = () => {
+
+    loadFile(
+      '/cc.docx',
+      function (error, content) {
+        if (error) {
+          throw error;
+        }
+        const zip = new PizZip(content);
+        const doc = new Docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true,
+          parser: expressionParser,
+        });
+        
+        
+        doc.render({...tcData, admdate:formatDate(tcData.admdate),
+          leftdate:formatDate(tcData.leftdate), 
+          issuedate:formatDate(tcData.issuedate), sem:tcData.sem.split(' ')[1]});
+        const out = doc.getZip().generate({
+          type: 'blob',
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        }); //Output the document using Data-URI
+        saveAs(out, `${tcData.name}(CC).doc`);
       }
     );
   };
@@ -243,7 +272,8 @@ function Work() {
               </Col>
             </Row>
             <button onClick={e=>getStudent(mob)} className='btn btn-success mt-3'>Get Student by Phone Number</button><br />
-            <button onClick={generateDocument} className='btn btn-primary mt-3'>Print</button>
+            <button onClick={generateDocument} className='btn btn-primary mt-3'>TC</button>
+            <button onClick={generateCC} className='btn btn-warning mt-3'>Conduct Certificate</button>
           </Col>
         </Row>
       </div>
